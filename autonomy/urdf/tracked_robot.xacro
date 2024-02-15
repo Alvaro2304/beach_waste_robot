@@ -1,0 +1,142 @@
+<?xml version="1.0" ?>
+<robot name="tracked_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<xacro:include filename="$(find autonomy)/urdf/materials.xacro" />
+<xacro:include filename="$(find autonomy)/urdf/tracked_robot.trans" />
+<xacro:include filename="$(find autonomy)/urdf/tracked_robot.gazebo" />
+<link name="base_link">
+  <inertial>
+    <origin xyz="-0.000697957365761748 -0.02693181329873898 -0.10360548608478944" rpy="0 0 0"/>
+    <mass value="189.21160692719502"/>
+    <inertia ixx="8.567394" iyy="5.528814" izz="10.16907" ixy="0.002631" iyz="0.595537" ixz="0.007196"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://autonomy/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://autonomy/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="left_track_link_1">
+  <inertial>
+    <origin xyz="0.017500185545245905 -0.15584208305997968 -0.17378022497017792" rpy="0 0 0"/>
+    <mass value="9.070297509831398"/>
+    <inertia ixx="0.658697" iyy="0.100739" izz="0.583862" ixy="0.0" iyz="0.033262" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.294546 -0.1326 0.106" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://autonomy/meshes/left_track_link_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="black"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.294546 -0.1326 0.106" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://autonomy/meshes/left_track_link_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <surface>
+      <friction>
+          <ode>
+              <mu>0.7</mu>
+              <mu2>150</mu2>
+              <fdir1>0 1 0</fdir1>
+          </ode>
+      </friction>
+    </surface>
+  </collision>
+</link>
+
+<link name="right_track_link_1">
+  <inertial>
+    <origin xyz="-0.017500185545247016 -0.15584208305997946 -0.17378022497017764" rpy="0 0 0"/>
+    <mass value="9.070297509831398"/>
+    <inertia ixx="0.658697" iyy="0.100739" izz="0.583862" ixy="0.0" iyz="0.033262" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.294546 -0.1326 0.106" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://autonomy/meshes/right_track_link_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="black"/>
+  </visual>
+  <collision>
+    <origin xyz="0.294546 -0.1326 0.106" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://autonomy/meshes/right_track_link_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <surface>
+      <friction>
+          <ode>
+              <mu>0.7</mu>
+              <mu2>150</mu2>
+              <fdir1>0 1 0</fdir1>
+          </ode>
+      </friction>
+    </surface>
+  </collision>
+</link>
+
+<link name="camera_link_1">
+  <inertial>
+    <origin xyz="7.161695076305528e-15 -0.014933658529232063 -3.351268915152694e-16" rpy="0 0 0"/>
+    <mass value="0.20856866728234189"/>
+    <inertia ixx="2.7e-05" iyy="0.000175" izz="0.000179" ixy="0.0" iyz="0.0" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.0 0.3117 -0.0007" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://autonomy/meshes/camera_link_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.0 0.3117 -0.0007" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://autonomy/meshes/camera_link_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="left_track_j" type="fixed">
+  <origin xyz="0.294546 0.1326 -0.106" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="left_track_link_1"/>
+</joint>
+
+<joint name="right_track_j" type="fixed">
+  <origin xyz="-0.294546 0.1326 -0.106" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="right_track_link_1"/>
+</joint>
+
+<joint name="camera_j" type="fixed">
+  <origin xyz="0.0 -0.3117 0.0007" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="camera_link_1"/>
+</joint>
+
+<gazebo>
+  <plugin filename="libSimpleTrackedVehiclePlugin.so" name="tracked_robot">
+    <body>base_link</body>
+    <left_track>left_track_link_1</left_track>
+    <right_track>right_track_link_1</right_track>
+    <track_mu>2</track_mu>
+    <track_mu2>0.5</track_mu2>
+  </plugin>
+
+  <plugin filename="libKeysToCmdVelPlugin.so" name="keyboard_control">
+    <publish_as_twist>true</publish_as_twist>
+    <cmd_vel_topic>~/simple_tracked/cmd_vel_twist</cmd_vel_topic>
+  </plugin>
+</gazebo>
+
+</robot>
